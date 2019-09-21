@@ -1,0 +1,9 @@
+version: '2.4'
+services:
+  mysql:
+    image: mysql:8.0.17
+    environment:
+      MYSQL_DATABASE: 'db'
+      MYSQL_USER: 'user'
+      MYSQL_PASSWORD: 'password'
+      MYSQL_ROOT_PASSWORD: 'password'
