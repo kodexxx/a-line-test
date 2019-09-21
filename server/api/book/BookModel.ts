@@ -1,5 +1,6 @@
 import { Connection } from '@Server/ops/MySQLConnection'
 import StringHelper from '@Server/hellpers/StringHelper'
+import get from 'lodash/get'
 
 export interface IBook {
   id?: number
@@ -10,6 +11,8 @@ export interface IBook {
   image?: string,
 }
 
+export const FIELDS = ['id', 'title', 'date', 'author', 'description', 'image']
+
 
 export class BookModel {
   public book: IBook
@@ -18,8 +21,9 @@ export class BookModel {
     this.book = book
   }
 
-  static async find(): Promise<BookModel[]> {
-    const [data, _] = await Connection.execute('SELECT * FROM books')
+  static async find(subQuery: string = ''): Promise<BookModel[]> {
+    const query = `SELECT ${FIELDS.join(', ')} FROM books ${subQuery}`
+    const [data, _] = await Connection.execute(query)
 
     const result: BookModel[] = []
 
@@ -29,8 +33,19 @@ export class BookModel {
     return result
   }
 
+  static async getTotalBooks(condition: string = ''): Promise<number> {
+    const [data, _] = await Connection.execute('SELECT COUNT(*) FROM books ' + condition)
+    const result = get(data, '0.COUNT(*)')
+
+    if (typeof result === 'undefined') {
+      throw new Error('Can`t get total count of books')
+    }
+
+    return result as number
+  }
+
   static async findById(id: number): Promise<BookModel> {
-    const [data, _] = await Connection.execute(`SELECT * FROM books WHERE \`id\`=${StringHelper.getPreparedValue(id)}`)
+    const [data, _] = await Connection.execute(`SELECT ${FIELDS.join(',')} FROM books WHERE \`id\`=${StringHelper.getPreparedValue(id)}`)
 
     if (typeof data[0] === 'undefined') {
       throw new Error(`Book with id=${id} not found`)
@@ -52,6 +67,4 @@ export class BookModel {
 
     return Connection.execute(query)
   }
-
-
 }

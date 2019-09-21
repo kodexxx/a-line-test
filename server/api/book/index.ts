@@ -5,7 +5,9 @@ const router = new Router()
 
 router
   .get('/', BookController.list)
-  .get('/:id', BookController.getById)
   .post('/', BookController.addBook)
+  .delete(':id')
+  .put('/:id')
+  .get('/:id', BookController.getById)
 
 export default router

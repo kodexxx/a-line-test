@@ -15,6 +15,21 @@ router.use('/api', apiRoute.middleware())
 app
   .use(logger())
   .use(json())
+  .use(async (ctx, next) => {
+    try {
+      await next()
+    } catch (err) {
+      const code = err.statusCode || err.status || 500
+
+      err.status = code
+      ctx.body = {
+        code,
+        error: err.message,
+        name: err.name,
+      }
+      ctx.app.emit('error', err, ctx)
+    }
+  })
   .use(bodyParser())
   .use(router.routes())
   .use(router.allowedMethods())

@@ -5,10 +5,6 @@ export interface IPreparedData {
   values: string[]
 }
 
-{
-
-}
-
 export default class StringHelper {
   static escapeString(str: string) {
     return str.toString().replace(/[\0\x08\x09\x1a\n\r"'\\\%]/g, (char: string): string => {
@@ -46,7 +42,7 @@ export default class StringHelper {
   static getPreparedData<T>(data: T): IPreparedData {
     const keys: [string?] = []
     const values: [string?] = []
-    
+
     for (let [key, value] of Object.entries(data)) {
       if (value instanceof Date) {
         value = moment(value).format('YYYY-MM-DD').toString()
@@ -61,4 +57,15 @@ export default class StringHelper {
     } as IPreparedData
   }
 
+  static parseNumber(value: string, defaultValue: number): number {
+    if (value === undefined) {
+      return defaultValue
+    }
+    const result = +value
+    if (!result) {
+      return defaultValue
+    }
+
+    return result
+  }
 }

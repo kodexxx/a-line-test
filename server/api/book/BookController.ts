@@ -1,5 +1,7 @@
 import { Context } from 'koa'
 import { BookModel, IBook } from '@Server/api/book/BookModel'
+import BookLogic from '@Server/api/book/BookLogic'
+import StringHelper from '@Server/hellpers/StringHelper'
 
 export default class BookController {
   static async addBook(ctx: Context) {
@@ -9,15 +11,30 @@ export default class BookController {
       bookData.date = new Date(bookData.date)
     }
 
-    const book = new BookModel(bookData)
-
-    ctx.body = await book.save()
+    ctx.body = await BookLogic.createBook(bookData)
   }
 
   static async list(ctx: Context) {
-    const result = await BookModel.find()
-    ctx.body = result
+    const { title, author } = ctx.query
+    const { limit, page } = ctx.query
+    ctx.body = await BookLogic.getBooks({
+        title,
+        author,
+      }, {
+        limit: StringHelper.parseNumber(limit, 10),
+        page: StringHelper.parseNumber(page, 0),
+      },
+    )
   }
+
+
+  // static async list(ctx: Context) {
+  //   const { limit, page } = ctx.query
+  //   ctx.body = await BookModel.findWithOffset({
+  //     limit: StringHelper.parseNumber(limit, 10),
+  //     page: StringHelper.parseNumber(page, 0),
+  //   })
+  // }
 
   static async getById(ctx: Context) {
     const { id } = ctx.params
