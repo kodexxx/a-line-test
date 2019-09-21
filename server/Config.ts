@@ -11,7 +11,8 @@ export default {
   port: parseNumberEnv('PORT', 3000),
   mysql: {
     host: process.env.MYSQL_HOST || '127.0.0.1',
-    user: process.env.MYSQL_USER || 'root',
+    user: process.env.MYSQL_USER || 'user',
+    password: process.env.MYSQL_PASSWORD || 'password',
     database: process.env.MYSQL_DATABASE || 'db',
     port: parseNumberEnv('MYSQL_PORT', 3306),
     waitForConnections: true,
