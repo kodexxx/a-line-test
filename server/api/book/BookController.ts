@@ -14,11 +14,13 @@ export default class BookController {
     ctx.body = await book.save()
   }
 
-  static list(ctx: Context) {
-    ctx.body = [
-      {
-        title: 'Book1',
-      },
-    ]
+  static async list(ctx: Context) {
+    const result = await BookModel.find()
+    ctx.body = result
+  }
+
+  static async getById(ctx: Context) {
+    const { id } = ctx.params
+    ctx.body = await BookModel.findById(id)
   }
 }

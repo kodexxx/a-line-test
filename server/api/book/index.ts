@@ -5,7 +5,7 @@ const router = new Router()
 
 router
   .get('/', BookController.list)
+  .get('/:id', BookController.getById)
   .post('/', BookController.addBook)
-
 
 export default router
