@@ -27,6 +27,13 @@ export default class BookController {
     )
   }
 
+  static async deleteById(ctx: Context) {
+    const { id } = ctx.params
+    await BookLogic.deleteBookById(id)
+    ctx.body = {
+      result: 'ok',
+    }
+  }
 
   // static async list(ctx: Context) {
   //   const { limit, page } = ctx.query

@@ -19,4 +19,7 @@ export default {
     connectionLimit: 10,
     queueLimit: 0,
   },
+  redis: {
+    port: parseNumberEnv('REDIS_PORT', 6379),
+  },
 }

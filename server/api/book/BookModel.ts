@@ -44,6 +44,14 @@ export class BookModel {
     return result as number
   }
 
+  static async deleteById(id: number): Promise<void> {
+    const result = await Connection.execute(`DELETE FROM books WHERE \`id\`=${StringHelper.getPreparedValue(id)}`)
+
+    if (get(result, '0.affectedRows') !== 1) {
+      throw new Error(`Book with id=${id} not found`)
+    }
+  }
+
   static async findById(id: number): Promise<BookModel> {
     const [data, _] = await Connection.execute(`SELECT ${FIELDS.join(',')} FROM books WHERE \`id\`=${StringHelper.getPreparedValue(id)}`)
 

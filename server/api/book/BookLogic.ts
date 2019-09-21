@@ -34,5 +34,7 @@ export default class BookLogic {
     }
   }
 
-  public static async getBookById()
+  public static async deleteBookById(id: number): Promise<void> {
+    await BookModel.deleteById(id)
+  }
 }
