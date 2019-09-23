@@ -1,10 +1,4 @@
-import redis from 'redis'
+import redis, { ClientOpts } from 'redis'
 import Config from '@Server/Config'
 
-const client = redis.createClient(Config.redis.port)
-
-client.on('error', (err) => {
-  console.log('Error ' + err)
-})
-
-
+export const client = redis.createClient(Config.redis as ClientOpts)
