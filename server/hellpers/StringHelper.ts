@@ -1,8 +1,8 @@
 import moment = require('moment')
 
-export interface IPreparedData {
-  keys: string[],
-  values: string[]
+export interface IKeyValue {
+  key: string,
+  value: string
 }
 
 export default class StringHelper {
@@ -39,22 +39,26 @@ export default class StringHelper {
     return 'NULL'
   }
 
-  static getPreparedData<T>(data: T): IPreparedData {
-    const keys: [string?] = []
-    const values: [string?] = []
+  static getPreparedData<T extends { [index: string]: any }>(fields: string[], data: T): IKeyValue[] {
+    const result: IKeyValue[] = []
 
-    for (let [key, value] of Object.entries(data)) {
+    for (let key of fields) {
+      if (!data.hasOwnProperty(key)) {
+        continue
+      }
+
+      let value = data[key]
       if (value instanceof Date) {
         value = moment(value).format('YYYY-MM-DD').toString()
       }
-      keys.push(`\`${key}\``)
-      values.push(this.getPreparedValue(value))
+      result.push({
+        key: `\`${key}\``,
+        value: this.getPreparedValue(value),
+      } as IKeyValue)
+
     }
 
-    return {
-      keys,
-      values,
-    } as IPreparedData
+    return result
   }
 
   static parseNumber(value: string, defaultValue: number): number {

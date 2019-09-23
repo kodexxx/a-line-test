@@ -62,16 +62,28 @@ export class BookModel {
     return new BookModel(data[0])
   }
 
+  static async updateById(book: IBook, id: number) {
+    const data = StringHelper.getPreparedData(FIELDS, book)
+    const preparedData = data.reduce((accum: string[], item) => accum.concat(item.key + '=' + item.value), []).join(',')
+
+    const query = `UPDATE 
+       books
+       SET ${preparedData} 
+       WHERE \`id\`=${StringHelper.getPreparedValue(id)}`
+
+    return Connection.execute(query)
+  }
+
   toJSON(): IBook {
     return this.book
   }
 
   save() {
-    const data = StringHelper.getPreparedData(this.book)
+    const data = StringHelper.getPreparedData(FIELDS, this.book)
 
     const query = `INSERT 
-       INTO books(${data.keys.join(',')}) 
-       VALUES(${data.values.join(',')})`
+       INTO books(${Object.keys(data).join(',')}) 
+       VALUES(${Object.values(data).join(',')})`
 
     return Connection.execute(query)
   }

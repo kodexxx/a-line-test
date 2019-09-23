@@ -37,4 +37,8 @@ export default class BookLogic {
   public static async deleteBookById(id: number): Promise<void> {
     await BookModel.deleteById(id)
   }
+
+  public static async updateBookById(book: IBook, id: number): Promise<void> {
+    await BookModel.updateById(book, id)
+  }
 }

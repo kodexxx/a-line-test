@@ -44,7 +44,7 @@ export async function setCache(ctx: Context, next: () => Promise<any>) {
   await next()
 }
 
-export async function weekCache(ctx: Context, next: () => Promise<any>) {
+export async function weakCache(ctx: Context, next: () => Promise<any>) {
   await cache.deleteAll()
   await next()
 }

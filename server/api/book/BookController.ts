@@ -2,16 +2,9 @@ import { Context } from 'koa'
 import { BookModel, IBook } from '@Server/api/book/BookModel'
 import BookLogic from '@Server/api/book/BookLogic'
 import StringHelper from '@Server/hellpers/StringHelper'
-import { BookCache } from '@Server/api/book/BookCache'
-
-const cache = new BookCache()
 
 export default class BookController {
   static async addBook(ctx: Context, next: () => Promise<any>) {
-
-    cache.deleteAll()
-      .catch(console.error)
-
     const bookData: IBook = ctx.request.body
 
     if (bookData.date) {
@@ -37,9 +30,6 @@ export default class BookController {
   }
 
   static async deleteById(ctx: Context, next: () => Promise<any>) {
-    cache.deleteAll()
-      .catch(console.error)
-
     const { id } = ctx.params
     await BookLogic.deleteBookById(id)
     ctx.body = {
@@ -48,8 +38,20 @@ export default class BookController {
     await next()
   }
 
-  static async getById(ctx: Context) {
+  static async getById(ctx: Context, next: () => Promise<any>) {
     const { id } = ctx.params
+
     ctx.body = await BookModel.findById(id)
+
+    await next()
+  }
+
+  static async patchBook(ctx: Context, next: () => Promise<any>) {
+    const bookData: IBook = ctx.request.body
+    const { id } = ctx.params
+
+    ctx.body = await BookLogic.updateBookById(bookData, id)
+
+    await next()
   }
 }
