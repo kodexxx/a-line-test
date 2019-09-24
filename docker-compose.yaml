@@ -29,7 +29,7 @@ services:
       - 6379:6379
   app:
     restart: always
-    image: kodexxx/books
+    image: kodexxx/books:latest
     environment:
       - MYSQL_HOST=mysql
       - REDIS_HOST=redis
