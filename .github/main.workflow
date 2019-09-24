@@ -3,9 +3,7 @@ workflow "Build and Publish" {
   resolves = "Publish"
 }
 
-
 action "Build" {
-  needs = ["Lint", "Test"]
   uses = "actions/action-builder/docker@master"
   runs = "make"
   args = "build"
