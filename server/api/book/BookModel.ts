@@ -3,6 +3,7 @@ import StringHelper from '@Server/hellpers/StringHelper'
 import get from 'lodash/get'
 import NotFoundGatewayError from '@Server/errors/gateway/NotFoundGatewayError'
 import InternalLogicError from '@Server/errors/logic/InternalLogicError'
+import { IFilterResult } from '@Server/api/book/BookQueryBuilder'
 
 export interface IBook {
   id?: number
@@ -23,9 +24,9 @@ export class BookModel {
     this.book = book
   }
 
-  static async find(subQuery: string = ''): Promise<BookModel[]> {
-    const query = `SELECT ${FIELDS.join(', ')} FROM books ${subQuery}`
-    const [data, _] = await Connection.execute(query)
+  static async find(subQuery: IFilterResult = { queryString: '', values: [] }): Promise<BookModel[]> {
+    const query = `SELECT ${FIELDS.join(', ')} FROM books ${subQuery.queryString}`
+    const [data, _] = await Connection.execute(query, subQuery.values)
 
     const result: BookModel[] = []
 
@@ -35,8 +36,8 @@ export class BookModel {
     return result
   }
 
-  static async getTotalBooks(condition: string = ''): Promise<number> {
-    const [data, _] = await Connection.execute('SELECT COUNT(*) FROM books ' + condition)
+  static async getTotalBooks(condition: IFilterResult = { queryString: '', values: [] }): Promise<number> {
+    const [data, _] = await Connection.execute(`SELECT COUNT(*) FROM books ${condition.queryString}`, condition.values)
     const result = get(data, '0.COUNT(*)')
 
     if (typeof result === 'undefined') {
@@ -47,7 +48,7 @@ export class BookModel {
   }
 
   static async deleteById(id: number): Promise<void> {
-    const result = await Connection.execute(`DELETE FROM books WHERE \`id\`=${StringHelper.getPreparedValue(id)}`)
+    const result = await Connection.execute(`DELETE FROM books WHERE \`id\`=?`, [id])
 
     if (get(result, '0.affectedRows') !== 1) {
       throw new NotFoundGatewayError(`Book with id=${id} not found`)
@@ -55,7 +56,7 @@ export class BookModel {
   }
 
   static async findById(id: number): Promise<BookModel> {
-    const [data, _] = await Connection.execute(`SELECT ${FIELDS.join(',')} FROM books WHERE \`id\`=${StringHelper.getPreparedValue(id)}`)
+    const [data, _] = await Connection.execute(`SELECT ${FIELDS.join(',')} FROM books WHERE \`id\`=?`, [id])
 
     if (typeof data[0] === 'undefined') {
       throw new NotFoundGatewayError(`Book with id=${id} not found`)
@@ -66,14 +67,17 @@ export class BookModel {
 
   static async updateById(book: IBook, id: number) {
     const data = StringHelper.getPreparedData(FIELDS, book)
-    const preparedData = data.reduce((accum: string[], item) => accum.concat(item.key + '=' + item.value), []).join(',')
+    const preparedData = data.reduce((accum: string[], item) => accum.concat(`${item.key} = ?`), []).join(',')
 
     const query = `UPDATE 
        books
        SET ${preparedData} 
-       WHERE \`id\`=${StringHelper.getPreparedValue(id)}`
+       WHERE \`id\`=?`
 
-    return Connection.execute(query)
+    return Connection.execute(query, [
+      ...data.map(item => item.value),
+      id,
+    ])
   }
 
   toJSON(): IBook {
@@ -84,9 +88,9 @@ export class BookModel {
     const data = StringHelper.getPreparedData(FIELDS, this.book)
 
     const query = `INSERT 
-       INTO books(${Object.keys(data).join(',')}) 
-       VALUES(${Object.values(data).join(',')})`
+       INTO books(${data.map(item => item.key).join(',')}) 
+       VALUES(${data.map(() => '?').join(',')})`
 
-    return Connection.execute(query)
+    return Connection.execute(query, data.map(item => item.value))
   }
 }

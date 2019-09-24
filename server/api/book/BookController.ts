@@ -16,11 +16,12 @@ export default class BookController {
   }
 
   static async list(ctx: Context, next: () => Promise<any>) {
-    const { title, author } = ctx.query
+    const { title, author, description } = ctx.query
     const { limit, page } = ctx.query
     ctx.body = await BookLogic.getBooks({
         title,
         author,
+        description,
       }, {
         limit: StringHelper.parseNumber(limit, 10),
         page: StringHelper.parseNumber(page, 0),

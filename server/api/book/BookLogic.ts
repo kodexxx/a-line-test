@@ -19,11 +19,12 @@ export default class BookLogic {
   }
 
   public static async getBooks(filter: IFilter, offsetFilter: IOffsetFilter): Promise<IOffsetResult> {
-    const condition = BookQueryBuilder.getFilter(filter)
-    const subQuery = condition + ' ' + BookQueryBuilder.getFilterLimit(offsetFilter)
+    const filterData = BookQueryBuilder.getFilter(filter)
+    const offsetFilterData = BookQueryBuilder.getFilterLimit(offsetFilter)
+    const findFilter = BookQueryBuilder.mergeFilters(filterData, offsetFilterData)
 
-    const books = await BookModel.find(subQuery)
-    const total = await BookModel.getTotalBooks(condition)
+    const books = await BookModel.find(findFilter)
+    const total = await BookModel.getTotalBooks(filterData)
 
     return {
       docs: books,
