@@ -1,6 +1,8 @@
 import { Connection } from '@Server/ops/MySQLConnection'
 import StringHelper from '@Server/hellpers/StringHelper'
 import get from 'lodash/get'
+import NotFoundGatewayError from '@Server/errors/gateway/NotFoundGatewayError'
+import InternalLogicError from '@Server/errors/logic/InternalLogicError'
 
 export interface IBook {
   id?: number
@@ -38,7 +40,7 @@ export class BookModel {
     const result = get(data, '0.COUNT(*)')
 
     if (typeof result === 'undefined') {
-      throw new Error('Can`t get total count of books')
+      throw new InternalLogicError('Can`t get total count of books')
     }
 
     return result as number
@@ -48,7 +50,7 @@ export class BookModel {
     const result = await Connection.execute(`DELETE FROM books WHERE \`id\`=${StringHelper.getPreparedValue(id)}`)
 
     if (get(result, '0.affectedRows') !== 1) {
-      throw new Error(`Book with id=${id} not found`)
+      throw new NotFoundGatewayError(`Book with id=${id} not found`)
     }
   }
 
@@ -56,7 +58,7 @@ export class BookModel {
     const [data, _] = await Connection.execute(`SELECT ${FIELDS.join(',')} FROM books WHERE \`id\`=${StringHelper.getPreparedValue(id)}`)
 
     if (typeof data[0] === 'undefined') {
-      throw new Error(`Book with id=${id} not found`)
+      throw new NotFoundGatewayError(`Book with id=${id} not found`)
     }
 
     return new BookModel(data[0])
