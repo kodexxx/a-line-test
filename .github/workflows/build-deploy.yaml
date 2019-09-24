@@ -1,9 +1,13 @@
-on: push
+name: Publish Docker
+on: [push]
 jobs:
-  my_first_job:
-    name: Build Docker image
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: hello world
-        uses: docker://docker:latest
-        run: docker --version
+      - uses: actions/checkout@master
+      - name: Publish to Registry
+        uses: elgohr/Publish-Docker-Github-Action@master
+        with:
+          name: myDocker/repository
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
