@@ -12,17 +12,6 @@ services:
       MYSQL_USER: 'user'
       MYSQL_PASSWORD: 'password'
       MYSQL_ROOT_PASSWORD: 'password'
-  phpmyadmin:
-    restart: always
-    image: phpmyadmin/phpmyadmin
-    links:
-      - mysql:db
-    ports:
-      - "127.0.0.1:10001:80"
-    environment:
-      MYSQL_USER: user
-      MYSQL_PASSWORD: password
-      MYSQL_ROOT_PASSWORD: password
   redis:
     restart: always
     image: redis:latest
