@@ -4,6 +4,7 @@ services:
     image: mysql:8.0.3
     volumes:
       - ./mysql_data:/var/lib/mysql
+      - ./server/migration/0-tables/books.sql:/docker-entrypoint-initdb.d/books.sql
     ports:
       - 3306:3306
     environment:
@@ -27,11 +28,11 @@ services:
     image: redis:latest
     ports:
       - 6379:6379
-#  app:
-#    restart: always
-#    image: potterua/a-line-test:latest
-#    environment:
-#      - MYSQL_HOST=mysql
-#      - REDIS_HOST=redis
-#    ports:
-#      - 30300:80
+  app:
+    restart: always
+    image: potterua/a-line-test:latest
+    environment:
+      - MYSQL_HOST=mysql
+      - REDIS_HOST=redis
+    ports:
+      - 30300:80
