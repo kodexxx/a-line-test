@@ -11,7 +11,9 @@ export default class BookController {
       bookData.date = new Date(bookData.date)
     }
 
-    ctx.body = await BookLogic.createBook(bookData)
+    ctx.body = {
+      id: await BookLogic.createBook(bookData),
+    }
     await next()
   }
 
@@ -51,7 +53,10 @@ export default class BookController {
     const bookData: IBook = ctx.request.body
     const { id } = ctx.params
 
-    ctx.body = await BookLogic.updateBookById(bookData, id)
+    await BookLogic.updateBookById(bookData, id)
+    ctx.body = {
+      result: 'ok',
+    }
 
     await next()
   }
