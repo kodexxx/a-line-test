@@ -9,6 +9,6 @@ router
   .post('/', BookController.addBook, weakCache)
   .delete('/:id', BookController.deleteById, weakCache)
   .patch('/:id', BookController.patchBook, weakCache)
-  .get('/:id', BookController.getById, weakCache)
+  .get('/:id', BookController.getById)
 
 export default router
