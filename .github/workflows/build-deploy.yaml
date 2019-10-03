@@ -11,3 +11,5 @@ jobs:
         run: docker build -t docker.pkg.github.com/kodexxx/a-line-test/app:latest .
       - name: Push
         run: docker push docker.pkg.github.com/kodexxx/a-line-test/app:latest
+      - name: Envs
+        run: printenv
