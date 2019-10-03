@@ -6,7 +6,7 @@ jobs:
     steps:
       - uses: actions/checkout@master
       - name: Login
-        run: docker login docker.pkg.github.com --username kodexxx -p 8eb22ac71143f6373ac7924fea611e6c796feebf
+        run: docker login docker.pkg.github.com -u ${{ DOCKER_LOGIN }} -p ${{ DOCKER_TOKEN }} 
       - name: Build
         run: docker build docker.pkg.github.com/kodexxx/a-line-test:latest .
       - name: Push
