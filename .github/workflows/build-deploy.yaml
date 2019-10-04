@@ -8,8 +8,10 @@ jobs:
       - name: Login
         run: docker login docker.pkg.github.com -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }} 
       - name: Build
-        run: docker build -t docker.pkg.github.com/kodexxx/a-line-test/app:latest .
+        run: docker build -t docker.pkg.github.com/kodexxx/a-line-test/app:${GITHUB_SHA} -t docker.pkg.github.com/kodexxx/a-line-test/app:latest .
       - name: Push
-        run: docker push docker.pkg.github.com/kodexxx/a-line-test/app:latest
+        run: |
+          docker push docker.pkg.github.com/kodexxx/a-line-test/app:latest 
+          docker push docker.pkg.github.com/kodexxx/a-line-test/app:${GITHUB_SHA} 
       - name: Envs
         run: printenv
