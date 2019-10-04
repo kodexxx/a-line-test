@@ -5,15 +5,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
-      - name: 'Prepare enviroments'
-        run: ::set-env name=VERSION::v$(cat package.json | grep version | head -1 | awk -F= "{ print $2 }" | sed 's/[version:,\",]//g' | tr -d '[[:space:]]')
       - name: Envs
         run: printenv
       - name: Login
         run: docker login docker.pkg.github.com -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }} 
       - name: Build
-        run: docker build -t docker.pkg.github.com/kodexxx/a-line-test/app:${VERSION} -t docker.pkg.github.com/kodexxx/a-line-test/app:latest .
-      - name: Push
         run: |
+          export VERSION=v$(cat package.json | grep version | head -1 | awk -F= "{ print $2 }" | sed 's/[version:,\",]//g' | tr -d '[[:space:]]')
+          
+          docker build -t docker.pkg.github.com/kodexxx/a-line-test/app:${VERSION} -t docker.pkg.github.com/kodexxx/a-line-test/app:latest .
           docker push docker.pkg.github.com/kodexxx/a-line-test/app:latest 
           docker push docker.pkg.github.com/kodexxx/a-line-test/app:${VERSION} 
+
