@@ -7,6 +7,7 @@ jobs:
       - uses: actions/checkout@master
       - name: 'Prepare enviroments'
         run: |
+          echo $(cat package.json | grep version | head -1 | awk -F= "{ print $2 }" | sed 's/[version:,\",]//g' | tr -d '[[:space:]]')
           export VERSION=$(cat package.json | grep version | head -1 | awk -F= "{ print $2 }" | sed 's/[version:,\",]//g' | tr -d '[[:space:]]')
       - name: Envs
         run: printenv
