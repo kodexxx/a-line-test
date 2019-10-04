@@ -8,6 +8,8 @@ jobs:
       - name: 'Prepare enviroments'
         run: |
           export VERSION=$(cat package.json | grep version | head -1 | awk -F= "{ print $2 }" | sed 's/[version:,\",]//g' | tr -d '[[:space:]]')
+      - name: Envs
+        run: printenv
       - name: Login
         run: docker login docker.pkg.github.com -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }} 
       - name: Build
@@ -16,5 +18,3 @@ jobs:
         run: |
           docker push docker.pkg.github.com/kodexxx/a-line-test/app:latest 
           docker push docker.pkg.github.com/kodexxx/a-line-test/app:${VERSION} 
-      - name: Envs
-        run: printenv
