@@ -5,13 +5,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@master
+      - name: 'Prepare enviroments'
+        run: |
+          export VERSION=$(cat package.json | grep version | head -1 | awk -F= "{ print $2 }" | sed 's/[version:,\",]//g' | tr -d '[[:space:]]')
       - name: Login
         run: docker login docker.pkg.github.com -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_TOKEN }} 
       - name: Build
-        run: docker build -t docker.pkg.github.com/kodexxx/a-line-test/app:${GITHUB_SHA} -t docker.pkg.github.com/kodexxx/a-line-test/app:latest .
+        run: docker build -t docker.pkg.github.com/kodexxx/a-line-test/app:${VERSION} -t docker.pkg.github.com/kodexxx/a-line-test/app:latest .
       - name: Push
         run: |
           docker push docker.pkg.github.com/kodexxx/a-line-test/app:latest 
-          docker push docker.pkg.github.com/kodexxx/a-line-test/app:${GITHUB_SHA} 
+          docker push docker.pkg.github.com/kodexxx/a-line-test/app:${VERSION} 
       - name: Envs
         run: printenv
